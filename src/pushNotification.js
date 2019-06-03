@@ -27,7 +27,18 @@ let generateMessage = (token, msg, data) => {
     return message;
 }
 
-let generatePushNotifications = (messages) => {
+/**
+ * Generate push notifications by making and sending message chunks.
+ *
+ * @param {List} messages A list of message objects.
+ */
+let generatePushNotifications = async (messages) => {
+    /*
+     * The Expo push notification service accepts batches of notifications so
+     * that you don't need to send 1000 requests to send 1000 notifications. We
+     * recommend you batch your notifications to reduce the number of requests
+     * and to compress them (notifications with similar content will get compressed).
+     */
     let chunks = expo.chunkPushNotifications(messages);
     let tickets = [];
 
@@ -46,6 +57,19 @@ let generatePushNotifications = (messages) => {
             // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    // Later, after the Expo push notification service has delivered the notifications 
+    // to Apple or Google (usually quickly, but allow the the service up to 30 minutes when under load), 
+    // a "receipt" for each notification is created. 
+    // The receipts will be available for at least a day; stale receipts are deleted.
+    let receiptIds = [];
+    for (let ticket of tickets) {
+        // NOTE: Not all tickets have IDs; for example, tickets for notifications
+        // that could not be enqueued will have error information and no receipt ID.
+        if (ticket.id) {
+            receiptIds.push(ticket.id);
         }
     }
 
