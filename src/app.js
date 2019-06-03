@@ -7,14 +7,6 @@ let logger = require('morgan');
 
 let app = express();
 
-let expo_sdk = require('expo-server-sdk');
-
-let Expo = expo_sdk.Expo;
-
-// Create a new Expo SDK client
-let expo = new Expo();
-
-
 const bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
 
@@ -26,10 +18,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// module for push notification
+let pushNotification = require('./pushNotification');
 
 app.post('/notification', (req, res) => {
-    let data = req.body;
-    console.log(data);
+    let body = req.body;
+    console.log(body);
+
+    // get the expo token from the request body (JSON object)
+    let {data} = body;
+    let {token, id} = data;
+
+    // TODO store token
 });
 
 // catch 404 and forward to error handler
