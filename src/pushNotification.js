@@ -1,8 +1,6 @@
 let pushNotification = require('node-pushnotifications');
 
-let expo_sdk = require('expo-server-sdk');
-
-let Expo = expo_sdk.Expo;
+const { Expo } = require('expo-server-sdk')
 
 // Create a new Expo SDK client
 let expo = new Expo();
@@ -106,3 +104,6 @@ let retrieveBatchesOfReceipts = async (receiptIdChunks) => {
         }
     }
 }
+
+module.exports.generateMessage = generateMessage;
+module.exports.generatePushNotifications = generatePushNotifications;

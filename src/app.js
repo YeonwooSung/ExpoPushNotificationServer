@@ -21,15 +21,46 @@ app.use(express.static(path.join(__dirname, 'public')));
 // module for push notification
 let pushNotification = require('./pushNotification');
 
+// lists to store data
+let messages = [];
+let tokens = [];
+
+
+/**
+ * Process the POST '/notification' request.
+ */
 app.post('/notification', (req, res) => {
-    let body = req.body;
-    console.log(body);
+    let data = req.body;
+    console.log(data);
 
-    // get the expo token from the request body (JSON object)
-    let {data} = body;
-    let {token, id} = data;
+    /*
+     * You could store the sent expo token by using database, etc.
+     * In this code, I simply store the received JSON object into the list.
+     * Also, it would be nice to write some codes to check if there is duplicating token.
+     */
 
-    // TODO store token
+    tokens.push(data);
+});
+
+/**
+ * Process the GET '/notification' request.
+ */
+app.get('/notification', (req, res) => {
+    messages = [];
+
+    for (let token of tokens) {
+        // Get message and data to send for push notification
+        // In this code, I hardcoded the message and data to send.
+        let notificationMsg = 'Notification message!';
+        let data = {'id': token['user']}
+
+        let msg = pushNotification.generateMessage(token['token'], notificationMsg, data);
+        messages.push(msg);
+    }
+
+    pushNotification.generatePushNotifications(messages);
+
+    res.send('ok');
 });
 
 // catch 404 and forward to error handler
@@ -49,4 +80,4 @@ app.use(function (err, req, res) {
     res.render('error');
 });
 
-module.exports.app = app;
+module.exports = app;
