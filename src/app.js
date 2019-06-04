@@ -16,7 +16,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // module for push notification
 let pushNotification = require('./pushNotification');
@@ -40,6 +39,8 @@ app.post('/notification', (req, res) => {
      */
 
     tokens.push(data);
+
+    res.send('ok');
 });
 
 /**
@@ -67,7 +68,6 @@ app.get('/notification', (req, res) => {
 app.use(function (req, res, next) {
     next(createError(404));
 });
-
 
 // error handler
 app.use(function (err, req, res) {

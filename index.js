@@ -1,10 +1,10 @@
 let app = require('./src/app').app;
 
-var debug = require('debug')('uberbackend:server');
+var debug = require('debug')('expopushnotification:server');
 var http = require('http');
 
 
-const httpPort = 8080; //use the 8080 http port number
+const httpPort = 9090; //use the 9090 http port number
 
 
 /* Create HTTP server. */
