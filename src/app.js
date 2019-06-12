@@ -26,9 +26,9 @@ let tokens = [];
 
 
 /**
- * Process the POST '/notification' request.
+ * Process the POST '/token' request.
  */
-app.post('/notification', (req, res) => {
+app.post('/token', (req, res) => {
     let data = req.body;
     console.log(data);
 
@@ -43,17 +43,21 @@ app.post('/notification', (req, res) => {
     res.send('ok');
 });
 
+
 /**
- * Process the GET '/notification' request.
+ * Process the POST '/notification' request.
  */
-app.get('/notification', (req, res) => {
+app.post('/notification', (req, res) => {
+    let data = req.body;
+    console.log(data);
+
     messages = [];
 
     for (let token of tokens) {
         // Get message and data to send for push notification
         // In this code, I hardcoded the message and data to send.
         let notificationMsg = 'Notification message!';
-        let data = {'id': token['user']}
+        let data = { 'id': token['user'] }
 
         let msg = pushNotification.generateMessage(token['token'], notificationMsg, data);
         messages.push(msg);
@@ -63,6 +67,7 @@ app.get('/notification', (req, res) => {
 
     res.send('ok');
 });
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -80,4 +85,4 @@ app.use(function (err, req, res) {
     res.render('error');
 });
 
-module.exports = app;
+module.exports.app = app;
