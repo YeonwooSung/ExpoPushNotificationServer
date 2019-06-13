@@ -19,30 +19,22 @@ app.use(cookieParser());
 
 // module for push notification
 let pushNotification = require('./pushNotification');
+let utils = require('./utils');
 
-// lists to store data
-let messages = [];
-let tokens = [];
+const RESPONSE_MSG = 'ok';
 
 
 /**
  * Process the POST '/token' request.
  */
 app.post('/token', (req, res) => {
-    let data = req.body;
+    let {data} = req.body;
     console.log(data);
 
-    /*
-     * You could store the sent expo token by using database, etc.
-     * In this code, I simply store the received JSON object into the list.
-     * Also, it would be nice to write some codes to check if there is duplicating token.
-     */
+    utils.appendToCSV(data);
 
-    tokens.push(data);
-
-    res.send('ok');
+    res.send(RESPONSE_MSG);
 });
-
 
 /**
  * Process the POST '/notification' request.
@@ -51,21 +43,26 @@ app.post('/notification', (req, res) => {
     let data = req.body;
     console.log(data);
 
-    messages = [];
+    let {id, message} = data;
+    let {title, body} = message;
 
+    let messages = [];
+    let tokens = [];
+
+    for (let i = 0; i < id.length; i++) {
+        let returnedArr = utils.readCSV(id); // get array of tokens from csv file
+        tokens.concat(returnedArr); // concatenate arrays
+    }
+
+    // use for loop to iterate the list of tokens.
     for (let token of tokens) {
-        // Get message and data to send for push notification
-        // In this code, I hardcoded the message and data to send.
-        let notificationMsg = 'Notification message!';
-        let data = { 'id': token['user'] }
-
-        let msg = pushNotification.generateMessage(token['token'], notificationMsg, data);
+        let msg = pushNotification.generateMessage(token, title, body, message);
         messages.push(msg);
     }
 
     pushNotification.generatePushNotifications(messages);
 
-    res.send('ok');
+    res.send(RESPONSE_MSG);
 });
 
 
