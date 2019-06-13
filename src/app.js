@@ -41,7 +41,6 @@ app.post('/token', (req, res) => {
  */
 app.post('/notification', (req, res) => {
     let data = req.body;
-    console.log(data);
 
     let {id, message} = data;
     let {title, body} = message;
@@ -50,12 +49,14 @@ app.post('/notification', (req, res) => {
     let tokens = [];
 
     for (let i = 0; i < id.length; i++) {
-        let returnedArr = utils.readCSV(id); // get array of tokens from csv file
-        tokens.concat(returnedArr); // concatenate arrays
+        let returnedArr = utils.readCSV(id[i]); // get array of tokens from csv file
+        tokens = tokens.concat(returnedArr); // concatenate arrays
     }
+    console.log(tokens);
 
     // use for loop to iterate the list of tokens.
     for (let token of tokens) {
+        console.log(token);
         let msg = pushNotification.generateMessage(token, title, body, message);
         messages.push(msg);
     }
