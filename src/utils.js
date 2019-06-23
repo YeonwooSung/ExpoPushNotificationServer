@@ -8,7 +8,6 @@ const FILE_PATH = 'data.csv';
 const FILE_ERROR = 'Error: Error while writing to the csv file';
 const RETURN_MSG = 'OK';
 
-
 let readCSV = (id) => {
     let tokens = [];
 
@@ -30,13 +29,25 @@ let readCSV = (id) => {
     return tokens;
 }
 
-function checkIfNotRegistered(id) {
-    let returned = readCSV(id);
 
-    if (returned.length == 0)
-        return true;
-    return false;
+let checkIfNotRegistered = (id, token) => {
+    var lines = fs.readFileSync(FILE_PATH, 'utf-8')
+        .split('\n')
+        .filter(Boolean);
+
+    for (let i = 1; i < lines.length; i++) {
+        let splitted = lines[i].split(COMMA);
+        let targetToken = splitted.slice(1).join('').split('\"').join('');
+        let targetID = splitted[0].split('\"').join('');
+
+        if (targetID == id && targetToken == token) {
+            return false;
+        }
+    }
+
+    return true;
 }
+
 
 let appendToCSV = (toCsv) => {
     let ret = RETURN_MSG
@@ -58,7 +69,7 @@ let appendToCSV = (toCsv) => {
                 console.log(err);
             }
         } else {
-            if (checkIfNotRegistered(toCsv['id'])) {
+            if (checkIfNotRegistered(toCsv['id'], toCsv['token'])) {
                 try {
                     let csv = parse(toCsv);
 
