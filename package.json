@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "json2csv": "^4.5.1",
+    "lodash": "^4.17.15",
     "node-pushnotifications": "^1.1.9"
   }
 }
